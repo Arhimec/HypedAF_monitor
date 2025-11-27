@@ -8,10 +8,10 @@ const COLLECTION_ID = 'HYPEDAF-9378b5';
 const API_URL = `https://api.multiversx.com/nfts?collection=${COLLECTION_ID}&order=desc&from=0&size=1`;
 
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
-let lastSeenNonce = 0;
-let monitoringInterval = null;
-let isRunning = false;
 
+let lastSeenNonce = 0;
+
+// Main function to check for new mints
 async function checkNewMints() {
   try {
     const response = await axios.get(API_URL);
@@ -19,13 +19,16 @@ async function checkNewMints() {
 
     if (!Array.isArray(nfts) || nfts.length === 0) return;
 
+    // Filter for NFTs we haven't seen yet
     const newMints = nfts.filter(nft => nft.nonce > lastSeenNonce);
 
     if (newMints.length === 0) {
-      console.log('No new mints detected');
+      // Optional: Comment this out to reduce console noise
+      console.log('No new mints detected'); 
       return;
     }
 
+    // Sort by nonce to ensure we process them in order
     newMints.sort((a, b) => a.nonce - b.nonce);
 
     for (const nft of newMints) {
@@ -34,11 +37,13 @@ async function checkNewMints() {
                       `Nonce: ${nft.nonce}`;
 
       const thumbnailUrl = nft.media && nft.media[0] && nft.media[0].thumbnailUrl;
+      
       const urlInlineKeyboard = {
         reply_markup: {
           inline_keyboard: [
             [{ text: '🎨 Mint an ugly mfr', url: 'https://mint-hypedaf.superrarebears.com/' }],
-            [{ text: 'Mark as SPAM', callback_data: 'Gotcha' }]
+            // "Gotcha" will trigger the callback query below, but won't stop the bot
+            [{ text: 'Mark as SPAM', callback_data: 'Gotcha' }] 
           ]
         }
       };
@@ -51,6 +56,7 @@ async function checkNewMints() {
       console.log(`Sent notification for nonce ${nft.nonce}`);
     }
 
+    // Update the last seen nonce to the highest one we just processed
     lastSeenNonce = newMints[newMints.length - 1].nonce;
 
   } catch (error) {
@@ -58,31 +64,26 @@ async function checkNewMints() {
   }
 }
 
-// Handle callback queries from inline keyboard
+// Handle callback queries (Button clicks)
 bot.on('callback_query', async (callbackQuery) => {
   const action = callbackQuery.data;
-  const chatId = callbackQuery.message.chat.id;
-  const messageId = callbackQuery.message.message_id;
+  // const chatId = callbackQuery.message.chat.id; // Unused but available if you need to reply to user
 
-  if (action === 'stop_bot') {
-    if (monitoringInterval) {
-      clearInterval(monitoringInterval);
-      monitoringInterval = null;
-      isRunning = false;
-      await bot.sendMessage(chatId, '🛑 Bot monitoring stopped!');
-      console.log('Bot stopped by user');
-    } else {
-      await bot.sendMessage(chatId, '⚠️ Bot is not currently running');
-    }
+  // Handle the "Mark as SPAM" button
+  if (action === 'Gotcha') {
+      console.log('User clicked Mark as SPAM - Action acknowledged.');
+      // You can add logic here to log the spam report to a database if needed
   }
 
-  // Answer the callback query to remove loading state
-  bot.answerCallbackQuery(callbackQuery.id);
+  // Answer the callback query to remove the "loading" animation on the button
+  // We do NOT stop the monitoring interval here.
+  bot.answerCallbackQuery(callbackQuery.id, { text: 'Feedback received!' });
 });
 
-// Start monitoring
-isRunning = true;
-monitoringInterval = setInterval(checkNewMints, 30000);
+// Start monitoring every 30 seconds
+setInterval(checkNewMints, 30000);
+
+// Initial check immediately on start
 checkNewMints();
 
-console.log('Bot started and monitoring for new mints...');
+console.log('Bot started and monitoring for new mints indefinitely...');
