@@ -2,26 +2,26 @@ HYPEDAF Mint Monitor Bot
 A Node.js Telegram bot that monitors the MultiversX blockchain for new NFT mints in the HYPEDAF collection. When a new NFT is detected, the bot automatically sends a notification with an image and mint details to a specified Telegram group.
 
 🚀 Features
-Real-time Monitoring: Polls the MultiversX API every 30 seconds to check for new mints.
+  - Real-time Monitoring: Polls the MultiversX API every 30 seconds to check for new mints.
 
-Smart Tracking: Uses nonce tracking to ensure only new items are reported.
+  - Smart Tracking: Uses nonce tracking to ensure only new items are reported.
 
-Rich Notifications: Sends the NFT thumbnail (if available) along with the Name and Nonce.
+  - Rich Notifications: Sends the NFT thumbnail (if available) along with the Name and Nonce.
 
-Interactive Buttons: Includes inline buttons to direct users to the minting page.
+  - Interactive Buttons: Includes inline buttons to direct users to the minting page.
 
 📋 Prerequisites
 Before running the bot, ensure you have the following installed:
 
-Node.js (v14 or higher)
+  - Node.js (v14 or higher)
 
-npm (usually comes with Node.js)
+  - npm (usually comes with Node.js)
 
 You also need:
 
-A Telegram Bot Token (Create one via @BotFather).
+  - A Telegram Bot Token (Create one via @BotFather).
 
-The Chat ID or Username of the Telegram group/channel where notifications should be sent.
+  - The Chat ID or Username of the Telegram group/channel where notifications should be sent.
 
 🛠️ Installation
 Clone or download this repository (or save the code into a file named bot.js).
