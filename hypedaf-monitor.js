@@ -1,7 +1,7 @@
 const axios = require('axios');
 const TelegramBot = require('node-telegram-bot-api');
 
-const TELEGRAM_BOT_TOKEN = '8465980133:AAFw84Q1kJSrrpMp3dEzf-pdb2jUqMr_RNc';
+const TELEGRAM_BOT_TOKEN = 'your_telegram_bot_token';
 const TELEGRAM_GROUP_ID = '@superrarebears';
 
 const COLLECTION_ID = 'HYPEDAF-9378b5';
